@@ -1,11 +1,22 @@
 Rails.application.routes.draw do
-  root 'pages/home'
-  get 'pages/help'
-  get 'pages/about'
+  #root 'pages#home'
+  #get 'pages/help'
+  #get 'pages/about'
 
-  resources :microposts
-  resources :users
+  #resources :microposts
+  #resources :users
 
+get "users/new"
+get "pages/home"
+get "pages/about"
+get "pages/help"
+resources :microposts
+resources :users
+match "/help", to: 'pages#help', via: 'get'
+match "/about", to: 'pages#about', via: 'get'
+match "/contact", to: 'pages#contact', via: 'get'
+match "/signup", to: 'users#new', via: 'get'
+root 'pages#home'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
