@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails',                '4.2.0'
+gem 'bcrypt',               '~> 3.1.7'
 gem 'bootstrap-sass',       '~> 3.3.1'
 gem 'sass-rails',           '5.0.0.beta1'
 gem 'uglifier',             '2.5.3'
@@ -21,8 +22,6 @@ group :production do
   gem 'pg',             '0.17.1'
   gem 'rails_12factor', '0.0.2'
 end
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
 
 #gem 'unicorn'
 
