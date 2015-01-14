@@ -1,15 +1,24 @@
 Rails.application.routes.draw do
 
+get 'sessions/new'
+get    'signin'   => 'sessions#new'
+post   'signin'   => 'sessions#create'
+delete 'signout'  => 'sessions#destroy'
 get "users/new"
 get "pages/home"
 get "pages/about"
 get "pages/help"
+
+resources :sessions, only: [:new, :create, :destroy]
 resources :microposts
 resources :users
+
 match "/help", to: 'pages#help', via: 'get'
 match "/about", to: 'pages#about', via: 'get'
 match "/contact", to: 'pages#contact', via: 'get'
 match "/signup", to: 'users#new', via: 'get'
+match '/signout', to: 'sessions#destroy', via: 'delete'
+
 root 'pages#home'
 
   # Example of regular route:
