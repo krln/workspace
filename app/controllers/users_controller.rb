@@ -1,8 +1,10 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  before_action :signed_in_user, only: [:index, :edit, :update, :destroy]
+  before_action :correct_user,   only: [:edit, :update]
+  before_action :admin_user,     only: :destroy
 
-   def index
-    @users = User.all
+  def index
+    @users = User.paginate(page: params[:page])
   end
 
   def show
@@ -14,6 +16,7 @@ class UsersController < ApplicationController
   end
 
   def edit
+    @user = User.find(params[:id])
   end
 
   def create
@@ -28,32 +31,41 @@ class UsersController < ApplicationController
   end
 
   def update
-    respond_to do |format|
-      if @user.update(user_params)
-        format.html { redirect_to @user, notice: 'User was successfully updated.' }
-        format.json { render :show, status: :ok, location: @user }
-      else
-        format.html { render :edit }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    @user = User.find(params[:id])
+    if @user.update_attributes(user_params)
+      flash[:success] = "Profil został uaktualniony."
+      redirect_to @user
+    else
+      render 'edit'
     end
   end
 
   def destroy
-    @user.destroy
-    respond_to do |format|
-      format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
-      format.json { head :no_content }
+    User.find(params[:id]).destroy
+    flash[:success] = "Użytkownik usunięty"
+    redirect_to users_url
     end
-  end
 
-  private
+private
 
-    def set_user
-      @user = User.find(params[:id])
+    def signed_in_user
+      unless signed_in?
+        store_location
+        flash[:danger] = "Zaloguj się"
+        redirect_to signin_url
+      end
     end
 
     def user_params
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    end
+
+    def correct_user
+      @user = User.find(params[:id])
+      redirect_to(root_url) unless current_user?(@user)
+    end
+
+    def admin_user
+      redirect_to(root_url) unless current_user.admin?
     end
 end
