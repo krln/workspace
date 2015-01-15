@@ -12,6 +12,7 @@ get "pages/help"
 resources :sessions, only: [:new, :create, :destroy]
 resources :microposts
 resources :users
+resources :account_activations, only: [:edit]
 
 match "/help", to: 'pages#help', via: 'get'
 match "/about", to: 'pages#about', via: 'get'
