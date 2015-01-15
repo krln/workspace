@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
 
+  get 'password_resets/new'
+
+  get 'password_resets/edit'
+
 get 'sessions/new'
 get    'signin'   => 'sessions#new'
 post   'signin'   => 'sessions#create'
@@ -13,6 +17,7 @@ resources :sessions, only: [:new, :create, :destroy]
 resources :microposts
 resources :users
 resources :account_activations, only: [:edit]
+resources :password_resets,     only: [:new, :create, :edit, :update]
 
 match "/help", to: 'pages#help', via: 'get'
 match "/about", to: 'pages#about', via: 'get'
