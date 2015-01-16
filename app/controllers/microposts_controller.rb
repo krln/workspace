@@ -1,5 +1,6 @@
 class MicropostsController < ApplicationController
-  before_action :set_micropost, only: [:show, :edit, :update, :destroy]
+  before_action :signed_in_user, only: [:create, :destroy]
+  before_action :correct_user,   only: :destroy
 
   def index
     @microposts = Micropost.all
@@ -16,16 +17,13 @@ class MicropostsController < ApplicationController
   end
 
   def create
-    @micropost = Micropost.new(micropost_params)
-
-    respond_to do |format|
-      if @micropost.save
-        format.html { redirect_to @micropost, notice: 'Micropost was successfully created.' }
-        format.json { render :show, status: :created, location: @micropost }
-      else
-        format.html { render :new }
-        format.json { render json: @micropost.errors, status: :unprocessable_entity }
-      end
+    @micropost = current_user.microposts.build(micropost_params)
+    if @micropost.save
+      flash[:success] = "Mikropost został utworzony!"
+      redirect_to root_url
+    else
+      @feed_items = []
+      render 'pages/home'
     end
   end
 
@@ -43,19 +41,22 @@ class MicropostsController < ApplicationController
 
   def destroy
     @micropost.destroy
-    respond_to do |format|
-      format.html { redirect_to microposts_url, notice: 'Micropost was successfully destroyed.' }
-      format.json { head :no_content }
+    flash[:success] = "Mikropost został usunięty."
+    redirect_to request.referrer || root_url
     end
-  end
 
   private
 
-    def set_micropost
-      @micropost = Micropost.find(params[:id])
-    end
+  def set_micropost
+    @micropost = Micropost.find(params[:id])
+  end
 
-    def micropost_params
-      params.require(:micropost).permit(:content, :user_id)
-    end
+  def micropost_params
+    params.require(:micropost).permit(:content)
+  end
+
+  def correct_user
+    @micropost = current_user.microposts.find_by(id: params[:id])
+    redirect_to root_url if @micropost.nil?
+  end
 end
